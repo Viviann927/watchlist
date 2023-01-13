@@ -65,24 +65,19 @@ def forge():
     db.session.commit()
     click.echo('Done.')
 
+@app.context_processor
+def inject_user():
+    user = User.query.first()
+    return dict(user=user)
+
+@app.errorhandler(404)
+def page_not_found(e):
+    return render_template('404.html'), 404
+
 @app.route('/')
 def index():
-    # return '<h1>Hello!</h1><img src="http://helloflask.com/totoro.gif">'
-    user = User.query.first()
     movies = Movie.query.all()
-    return render_template('index.html', user=user, movies=movies)
-
-@app.route('/user/<name>')
-def user_page(name):
-    return 'User: %s' % name
-
-@app.route('/test')
-def test_url_for():
-    print(url_for('hello'))
-    print(url_for('user_page', name='Vivian'))
-    print(url_for('test_url_for'))
-    print(url_for('test_url_for', num=2))
-    return 'Test Page'
+    return render_template('index.html', movies=movies)
 
 
 
